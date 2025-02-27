@@ -67,13 +67,6 @@ const ExecutiveSummary = ({
               LeadMagic a "Clay Success" story. From top Lead Generation Agency
               to Fast Growing SaaS.
             </p>
-
-            <div className="mt-4 flex space-x-3">
-              <Button className="bg-white text-blue-700 hover:bg-blue-50">
-                View Annual Plan
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
           </div>
         </div>
         <div className="bg-white p-5">
@@ -263,10 +256,6 @@ const ExecutiveSummary = ({
                 Lock in your annual discount within 30 days and start saving
                 immediately.
               </p>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                View Annual Plan Details
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
             </div>
           </div>
         </CardContent>
