@@ -265,12 +265,12 @@ const AnnualPlanBenefits = ({
                   <span>100M</span>
                 </div>
                 <div className="flex items-center justify-center text-xs text-primary font-medium mt-2">
-                  <span>Current usage: 5.1M credits</span>
+                  <span>Current usage: 20.5M credits</span>
                 </div>
                 <div className="mt-4 text-sm">
                   <div className="flex items-center gap-2 text-primary">
                     <CheckCircle className="h-4 w-4" />
-                    <span>Current annual usage: 5.1M credits</span>
+                    <span>Current annual usage: 20.5M credits</span>
                   </div>
                   <div className="flex items-center gap-2 text-green-600 mt-1">
                     <CheckCircle className="h-4 w-4" />
@@ -612,7 +612,7 @@ const AnnualPlanBenefits = ({
           <CardContent className="space-y-4">
             <div className="p-4 bg-card rounded-lg border">
               <h3 className="text-lg font-semibold mb-2">
-                Based on your current usage of 5.1M credits annually
+                Based on your current usage of 20.5M credits annually
               </h3>
               <p className="mb-4">
                 We recommend committing to{" "}
