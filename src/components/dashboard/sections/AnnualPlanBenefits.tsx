@@ -115,7 +115,13 @@ const AnnualPlanBenefits = ({
     const discountedAnnualAmount = discountedMonthlyAmount * 12;
 
     // Calculate the equivalent months of free service
-    const freeMonthsEquivalent = annualSavings / standardMonthlyAmount;
+    const freeMonthsEquivalent = annualSavings / currentMonthlySpend;
+
+    // For display purposes - show how much more volume they're getting
+    const volumeIncrease =
+      tierCommitmentCredits > currentMonthlyCredits * 12
+        ? (tierCommitmentCredits / (currentMonthlyCredits * 12) - 1) * 100
+        : 0;
 
     return {
       applicableTier,
@@ -129,8 +135,9 @@ const AnnualPlanBenefits = ({
       discountPercentage: applicableTier.discount * 100,
       monthlyCommitmentCredits,
       annualCommitmentCredits: tierCommitmentCredits,
+      volumeIncrease,
     };
-  }, [commitmentTier]);
+  }, [commitmentTier, currentMonthlyCredits, currentMonthlySpend]);
 
   return (
     <div className="w-full h-full bg-slate-50 p-6 overflow-y-auto">
@@ -350,18 +357,25 @@ const AnnualPlanBenefits = ({
                       { maximumFractionDigits: 0 },
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="line-through">
-                      $
-                      {calculations.standardAnnualAmount.toLocaleString(
-                        undefined,
-                        { maximumFractionDigits: 0 },
-                      )}{" "}
-                      list price
-                    </span>
-                    <span className="text-green-600 font-medium">
-                      {calculations.discountPercentage}% off
-                    </span>
+                  <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <span className="line-through">
+                        $
+                        {calculations.standardAnnualAmount.toLocaleString(
+                          undefined,
+                          { maximumFractionDigits: 0 },
+                        )}{" "}
+                        list price
+                      </span>
+                      <span className="text-green-600 font-medium">
+                        {calculations.discountPercentage}% off
+                      </span>
+                    </div>
+                    <div className="text-blue-600 font-medium">
+                      {commitmentTier}M credits (
+                      {Math.round(calculations.volumeIncrease)}% more volume
+                      than current usage)
+                    </div>
                   </div>
                 </div>
 
@@ -401,7 +415,8 @@ const AnnualPlanBenefits = ({
                   })}
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  Money left on the table by staying with monthly billing
+                  Money left on the table by staying with monthly billing at{" "}
+                  {commitmentTier}M credit volume
                 </div>
               </div>
 
@@ -461,7 +476,9 @@ const AnnualPlanBenefits = ({
                   )}
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  Effective monthly cost ($
+                  Effective monthly cost for{" "}
+                  {(calculations.monthlyCommitmentCredits / 1000000).toFixed(2)}
+                  M credits ($
                   {calculations.applicableTier.pricePerCredit.toFixed(4)} per
                   credit)
                 </div>
@@ -680,7 +697,8 @@ const AnnualPlanBenefits = ({
                   })}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {calculations.discountPercentage}% off standard pricing
+                  {calculations.discountPercentage}% off standard pricing for{" "}
+                  {commitmentTier}M credits
                 </div>
               </div>
             </div>
