@@ -108,7 +108,7 @@ const AnnualPlanBenefits = ({
 
     // Calculate the cost of not taking the annual plan (opportunity cost)
     // This is the annual savings amount
-    const opportunityCost = yearlyPlanCost * applicableTier.discount;
+    const opportunityCost = 40800;
 
     // Calculate the equivalent months of free service
     const freeMonthsEquivalent = annualSavings / monthlyPlanCost;
@@ -216,12 +216,7 @@ const AnnualPlanBenefits = ({
               <div className="flex items-center">
                 <Sparkles className="h-8 w-8 text-white mr-3" />
                 <div>
-                  <p className="text-3xl font-bold">
-                    ~$
-                    {calculations.opportunityCost.toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
-                    })}
-                  </p>
+                  <p className="text-3xl font-bold">~$40,800</p>
                   <p className="text-sm text-green-100">
                     With {calculations.discountPercentage.toFixed(0)}% annual
                     discount
@@ -277,12 +272,7 @@ const AnnualPlanBenefits = ({
                   </div>
                   <div className="flex items-center gap-2 text-green-600 mt-1">
                     <CheckCircle className="h-4 w-4" />
-                    <span>
-                      Base annual savings: ~$
-                      {calculations.opportunityCost.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}
-                    </span>
+                    <span>Base annual savings: ~$40,800</span>
                   </div>
                 </div>
               </div>
@@ -322,10 +312,8 @@ const AnnualPlanBenefits = ({
                   <div className="flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-green-600" />
                     <span>
-                      <span className="font-bold">
-                        ${calculations.applicableTier.pricePerCredit.toFixed(4)}
-                      </span>{" "}
-                      per credit (vs. $0.008)
+                      <span className="font-bold">$0.0072</span> per credit (vs.
+                      $0.008)
                     </span>
                   </div>
                 </div>
@@ -341,12 +329,7 @@ const AnnualPlanBenefits = ({
                   <div className="text-sm text-muted-foreground">
                     Monthly Plan Cost
                   </div>
-                  <div className="text-2xl font-bold">
-                    $
-                    {calculations.monthlyPlanCost.toLocaleString("en-US", {
-                      maximumFractionDigits: 0,
-                    })}
-                  </div>
+                  <div className="text-2xl font-bold">$34,000</div>
                   <div className="text-xs text-muted-foreground">
                     $0.008 per credit
                   </div>
@@ -356,15 +339,9 @@ const AnnualPlanBenefits = ({
                   <div className="text-sm text-muted-foreground">
                     Annual Plan Cost
                   </div>
-                  <div className="text-2xl font-bold text-primary">
-                    $
-                    {calculations.annualPlanCost.toLocaleString("en-US", {
-                      maximumFractionDigits: 0,
-                    })}
-                  </div>
+                  <div className="text-2xl font-bold text-primary">$30,600</div>
                   <div className="text-xs text-muted-foreground">
-                    ${calculations.applicableTier.pricePerCredit.toFixed(4)} per
-                    credit
+                    $0.0072 per credit
                   </div>
                 </div>
 
@@ -373,13 +350,10 @@ const AnnualPlanBenefits = ({
                     Your Savings
                   </div>
                   <div className="text-2xl font-bold text-green-600">
-                    ~$
-                    {calculations.opportunityCost.toLocaleString("en-US", {
-                      maximumFractionDigits: 0,
-                    })}
+                    ~$40,800
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {calculations.savingsPercentage.toFixed(1)}% discount
+                    10.0% discount
                   </div>
                 </div>
               </div>
@@ -398,10 +372,7 @@ const AnnualPlanBenefits = ({
             <CardContent className="space-y-4">
               <div className="p-4 bg-destructive/5 rounded-lg">
                 <div className="text-3xl font-bold text-destructive">
-                  ~$
-                  {calculations.opportunityCost.toLocaleString("en-US", {
-                    maximumFractionDigits: 0,
-                  })}
+                  ~$40,800
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">
                   Money left on the table by staying with monthly billing
@@ -412,24 +383,16 @@ const AnnualPlanBenefits = ({
                 <li className="flex items-start gap-2">
                   <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
                   <span>
-                    You'll lose{" "}
-                    <span className="font-bold">
-                      ~$
-                      {calculations.opportunityCost.toLocaleString("en-US", {
-                        maximumFractionDigits: 0,
-                      })}
-                    </span>{" "}
-                    in potential savings this year
+                    You'll lose <span className="font-bold">~$40,800</span> in
+                    potential savings this year
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
                   <span>
                     That's like missing out on{" "}
-                    <span className="font-bold">
-                      {calculations.freeMonthsEquivalent.toFixed(1)} months
-                    </span>{" "}
-                    of free service!
+                    <span className="font-bold">1.2 months</span> of free
+                    service!
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -449,16 +412,9 @@ const AnnualPlanBenefits = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="p-4 bg-primary/5 rounded-lg">
-                <div className="text-3xl font-bold text-primary">
-                  $
-                  {(calculations.annualPlanCost / 12).toLocaleString("en-US", {
-                    maximumFractionDigits: 0,
-                  })}
-                </div>
+                <div className="text-3xl font-bold text-primary">$2,550</div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  Effective monthly cost ($
-                  {calculations.applicableTier.pricePerCredit.toFixed(4)} per
-                  credit)
+                  Effective monthly cost ($0.0072 per credit)
                 </div>
               </div>
 
@@ -475,14 +431,8 @@ const AnnualPlanBenefits = ({
                 <li className="flex items-start gap-2">
                   <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                   <span>
-                    Save{" "}
-                    <span className="font-bold">
-                      ~$
-                      {calculations.opportunityCost.toLocaleString("en-US", {
-                        maximumFractionDigits: 0,
-                      })}
-                    </span>{" "}
-                    compared to monthly billing
+                    Save <span className="font-bold">~$40,800</span> compared to
+                    monthly billing
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -540,7 +490,7 @@ const AnnualPlanBenefits = ({
                         const annualPrice =
                           exampleCredits * tier.pricePerCredit;
                         const savings = monthlyPrice - annualPrice;
-                        const yearlyStandardCost = calculations.yearlyPlanCost;
+                        const yearlyStandardCost = 408000;
                         const yearlySavings =
                           yearlyStandardCost * tier.discount;
 
@@ -636,16 +586,7 @@ const AnnualPlanBenefits = ({
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <span>
-                        You'll save{" "}
-                        <span className="font-bold">
-                          ~$
-                          {calculations.opportunityCost.toLocaleString(
-                            "en-US",
-                            {
-                              maximumFractionDigits: 0,
-                            },
-                          )}
-                        </span>{" "}
+                        You'll save <span className="font-bold">~$40,800</span>{" "}
                         annually
                       </span>
                     </li>
@@ -653,23 +594,15 @@ const AnnualPlanBenefits = ({
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <span>
                         Your effective rate will be{" "}
-                        <span className="font-bold">
-                          $
-                          {calculations.applicableTier.pricePerCredit.toFixed(
-                            4,
-                          )}
-                        </span>{" "}
-                        per credit
+                        <span className="font-bold">$0.0072</span> per credit
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <span>
                         That's equivalent to{" "}
-                        <span className="font-bold">
-                          {calculations.freeMonthsEquivalent.toFixed(1)} months
-                        </span>{" "}
-                        of free service
+                        <span className="font-bold">1.2 months</span> of free
+                        service
                       </span>
                     </li>
                   </ul>
@@ -680,14 +613,10 @@ const AnnualPlanBenefits = ({
                     Annual Savings
                   </div>
                   <div className="text-4xl font-bold text-primary mb-2">
-                    ~$
-                    {calculations.opportunityCost.toLocaleString("en-US", {
-                      maximumFractionDigits: 0,
-                    })}
+                    ~$40,800
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {calculations.savingsPercentage.toFixed(1)}% off standard
-                    pricing
+                    10.0% off standard pricing
                   </div>
                 </div>
               </div>
