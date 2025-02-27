@@ -41,15 +41,41 @@ const AnnualPlanBenefits = ({
 
   // Current usage data
   const currentAnnualCredits = 4347250; // February 2025 usage
+  const currentMonthlyCredits = 4347250; // February 2025 monthly usage
   const currentAnnualSpend = 417336; // $417,336 annual cost
 
   // Discount tiers (in millions of credits)
   const discountTiers = [
-    { threshold: 40, discount: 0.1, pricePerCredit: 0.0072 },
-    { threshold: 50, discount: 0.15, pricePerCredit: 0.0068 },
-    { threshold: 60, discount: 0.2, pricePerCredit: 0.0064 },
-    { threshold: 75, discount: 0.25, pricePerCredit: 0.006 },
-    { threshold: 90, discount: 0.3, pricePerCredit: 0.0056 },
+    {
+      threshold: 40,
+      discount: 0.1,
+      pricePerCredit: 0.0072,
+      annualCommitment: 40000000,
+    },
+    {
+      threshold: 50,
+      discount: 0.15,
+      pricePerCredit: 0.0068,
+      annualCommitment: 50000000,
+    },
+    {
+      threshold: 60,
+      discount: 0.2,
+      pricePerCredit: 0.0064,
+      annualCommitment: 60000000,
+    },
+    {
+      threshold: 75,
+      discount: 0.25,
+      pricePerCredit: 0.006,
+      annualCommitment: 75000000,
+    },
+    {
+      threshold: 90,
+      discount: 0.3,
+      pricePerCredit: 0.0056,
+      annualCommitment: 90000000,
+    },
   ];
 
   // Calculate the applicable discount based on commitment tier
@@ -231,7 +257,7 @@ const AnnualPlanBenefits = ({
                   <span>90M</span>
                 </div>
                 <div className="flex items-center justify-center text-xs text-primary font-medium mt-2">
-                  <span>Current usage: 4.35M credits/month</span>
+                  <span>Current usage: 4.35M credits/month (~52.2M/year)</span>
                 </div>
               </div>
 
@@ -254,7 +280,7 @@ const AnnualPlanBenefits = ({
                       className={`text-center p-2 rounded-md cursor-pointer ${commitmentTier === tier.threshold ? "bg-primary text-primary-foreground" : "bg-muted"}`}
                       onClick={() => setCommitmentTier(tier.threshold)}
                     >
-                      <div className="text-xs">{tier.threshold}M+</div>
+                      <div className="text-xs">{tier.threshold}M</div>
                       <div className="font-bold">{tier.discount * 100}%</div>
                       {index >= 1 && (
                         <div className="text-xs mt-1 bg-amber-200 text-amber-800 px-1 rounded-sm font-medium">
@@ -281,7 +307,7 @@ const AnnualPlanBenefits = ({
 
             <div className="bg-card rounded-lg p-4 border">
               <h3 className="text-lg font-semibold mb-4">
-                Annual Commitment Summary
+                Annual Commitment Summary ({commitmentTier}M Credits)
               </h3>
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-4">
                 <div>
@@ -385,6 +411,13 @@ const AnnualPlanBenefits = ({
                       months
                     </span>{" "}
                     of free service!
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
+                  <span>
+                    You'll need to commit to purchasing {commitmentTier}M
+                    credits annually to get this rate
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -501,8 +534,7 @@ const AnnualPlanBenefits = ({
                             onClick={() => setCommitmentTier(tier.threshold)}
                           >
                             <td className="py-3 px-4">
-                              {tier.threshold}M - {nextTierThreshold - 1}M
-                              Credits
+                              {tier.threshold}M Credits
                               {index >= 1 && (
                                 <Badge
                                   variant="outline"
@@ -557,13 +589,16 @@ const AnnualPlanBenefits = ({
 
         <Card className="bg-primary/5 border-primary/20 mb-8">
           <CardHeader>
-            <CardTitle>Get Started with Your Annual Plan</CardTitle>
+            <CardTitle>
+              Get Started with Your {commitmentTier}M Credit Annual Plan
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
               <div>
                 <h4 className="font-medium mb-2">
-                  With a {calculations.discountPercentage}% discount:
+                  With a {calculations.discountPercentage}% discount (
+                  {commitmentTier}M credit commitment):
                 </h4>
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
@@ -622,7 +657,7 @@ const AnnualPlanBenefits = ({
           </CardContent>
           <CardFooter>
             <Button className="w-full" size="lg">
-              Lock In Your Annual Rate Now{" "}
+              Lock In Your {commitmentTier}M Credit Annual Plan{" "}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardFooter>
