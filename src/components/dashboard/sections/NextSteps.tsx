@@ -196,7 +196,7 @@ const NextSteps = ({
 
       <Card className="bg-primary/5 border-primary/20">
         <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
             <div>
               <h2 className="text-xl font-bold text-primary mb-2">
                 Ready to move forward?
@@ -207,7 +207,7 @@ const NextSteps = ({
                 savings.
               </p>
             </div>
-            <div className="mt-4 md:mt-0">
+            <div class="md:mt-0">
               <Button size="lg" className="font-semibold">
                 Sign Annual Agreement
                 <ArrowRight className="ml-2 h-5 w-5" />

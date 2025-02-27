@@ -23,20 +23,25 @@ interface DiscountSliderProps {
 const DiscountSlider = ({
   initialDiscount = 10,
   minDiscount = 10,
-  maxDiscount = 25,
-  step = 1,
-  basePrice = 10000,
+  maxDiscount = 30,
+  step = 5,
+  basePrice = 34000,
   onDiscountChange,
 }: DiscountSliderProps) => {
   const [discount, setDiscount] = useState(initialDiscount);
   const [savings, setSavings] = useState(0);
   const [creditRate, setCreditRate] = useState(0.008);
   const [discountedRate, setDiscountedRate] = useState(0);
+  const [annualSavings, setAnnualSavings] = useState(0);
 
   useEffect(() => {
     // Calculate savings based on discount
     const calculatedSavings = (basePrice * discount) / 100;
     setSavings(calculatedSavings);
+
+    // Calculate annual savings
+    const calculatedAnnualSavings = calculatedSavings * 12;
+    setAnnualSavings(calculatedAnnualSavings);
 
     // Calculate discounted credit rate
     const newDiscountedRate = creditRate * (1 - discount / 100);
@@ -125,28 +130,30 @@ const DiscountSlider = ({
             <span className="text-sm font-medium">Monthly Savings:</span>
             <span className="font-semibold flex items-center text-green-600">
               <DollarSign className="h-4 w-4 mr-1" />
-              {savings.toLocaleString()}
+              {savings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </span>
           </div>
           <div className="flex items-center justify-between mt-2">
             <span className="text-sm font-medium">Current Credit Rate:</span>
             <span className="font-semibold flex items-center">
               <DollarSign className="h-4 w-4 mr-1" />
-              {creditRate.toFixed(6)}/credit
+              {creditRate.toFixed(4)}/credit
             </span>
           </div>
           <div className="flex items-center justify-between mt-2 pt-2 border-t">
             <span className="text-sm font-medium">Discounted Rate:</span>
             <span className="font-bold flex items-center text-green-600">
               <DollarSign className="h-4 w-4 mr-1" />
-              {discountedRate.toFixed(6)}/credit
+              {discountedRate.toFixed(4)}/credit
             </span>
           </div>
           <div className="flex items-center justify-between mt-2 pt-2 border-t">
             <span className="text-sm font-medium">New Monthly Cost:</span>
             <span className="font-bold flex items-center text-lg">
               <DollarSign className="h-5 w-5 mr-1" />
-              {(basePrice - savings).toLocaleString()}
+              {(basePrice - savings).toLocaleString(undefined, {
+                maximumFractionDigits: 0,
+              })}
             </span>
           </div>
         </div>
@@ -160,8 +167,11 @@ const DiscountSlider = ({
               </h4>
               <p className="text-green-700 text-sm mt-1">
                 At your current growth rate, locking in a {discount}% discount
-                now could save you up to ${(savings * 12).toLocaleString()} over
-                the next 12 months.
+                now could save you up to ~$
+                {annualSavings.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}{" "}
+                over the next 12 months.
               </p>
             </div>
           </div>

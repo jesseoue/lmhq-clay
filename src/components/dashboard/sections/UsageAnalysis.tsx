@@ -333,7 +333,7 @@ const UsageAnalysis = ({
 
   return (
     <div className="w-full h-full bg-white p-6 rounded-lg overflow-y-auto">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
         <div>
           <h1 className="text-2xl font-bold">{title}</h1>
           <p className="text-gray-500 mt-1">{description}</p>
@@ -343,7 +343,7 @@ const UsageAnalysis = ({
             revenue in 2024."
           </blockquote>
         </div>
-        <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
+        <div className="flex flex-wrap gap-2 md:mt-0">
           <Select
             value={displayMode}
             onValueChange={(value: "dollars" | "credits") => {
@@ -405,7 +405,7 @@ const UsageAnalysis = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <Card className="bg-card">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">
@@ -557,7 +557,7 @@ const UsageAnalysis = ({
             </CardFooter>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {serviceData.map((service, index) => (
               <Card key={index} className="bg-card">
                 <CardHeader className="pb-2">

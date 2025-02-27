@@ -115,7 +115,7 @@ const ExecutiveSummary = ({
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mb-6">
         <Card className="col-span-2 bg-white border shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">Community Partnership</CardTitle>
@@ -191,7 +191,7 @@ const ExecutiveSummary = ({
           <CardTitle className="text-lg">Annual Plan Benefits</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-3">
               <div className="flex items-start">
                 <Zap className="h-5 w-5 text-amber-500 mr-2 mt-0.5" />
