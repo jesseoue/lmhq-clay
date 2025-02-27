@@ -313,8 +313,13 @@ const AnnualPlanBenefits = ({
                       calculations.effectiveMonthlyAmount * 12
                     ).toLocaleString()}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {calculations.discountPercentage}% discount applied
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="line-through">
+                      ${(currentMonthlySpend * 12).toLocaleString()} list price
+                    </span>
+                    <span className="text-green-600 font-medium">
+                      {calculations.discountPercentage}% off
+                    </span>
                   </div>
                 </div>
 
@@ -468,6 +473,7 @@ const AnnualPlanBenefits = ({
                         </th>
                         <th className="text-left py-3 px-4">Discount</th>
                         <th className="text-left py-3 px-4">Monthly Cost</th>
+                        <th className="text-left py-3 px-4">Annual Cost</th>
                         <th className="text-left py-3 px-4">Annual Savings</th>
                       </tr>
                     </thead>
@@ -517,6 +523,12 @@ const AnnualPlanBenefits = ({
                             <td className="py-3 px-4">
                               $
                               {monthlyCost.toLocaleString(undefined, {
+                                maximumFractionDigits: 0,
+                              })}
+                            </td>
+                            <td className="py-3 px-4 font-medium">
+                              $
+                              {(monthlyCost * 12).toLocaleString(undefined, {
                                 maximumFractionDigits: 0,
                               })}
                             </td>
