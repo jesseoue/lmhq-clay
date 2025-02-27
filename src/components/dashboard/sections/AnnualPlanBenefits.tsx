@@ -159,11 +159,16 @@ const AnnualPlanBenefits = ({
                 <TrendingUp className="h-8 w-8 text-primary mr-3" />
                 <div>
                   <p className="text-3xl font-bold text-primary">
-                    ${calculations.effectiveMonthlyAmount.toLocaleString()}
+                    $
+                    {(
+                      calculations.effectiveMonthlyAmount * 12
+                    ).toLocaleString()}
                   </p>
                   <p className="text-sm text-gray-500">
                     ${calculations.applicableTier.pricePerCredit.toFixed(4)}
-                    /credit
+                    /credit ($
+                    {calculations.effectiveMonthlyAmount.toLocaleString()}
+                    /month)
                   </p>
                 </div>
               </div>
@@ -243,9 +248,10 @@ const AnnualPlanBenefits = ({
 
                 <div className="grid grid-cols-5 gap-1">
                   {discountTiers.map((tier, index) => (
-                    <div
+                    <button
                       key={index}
-                      className={`text-center p-2 rounded-md cursor-pointer ${commitmentTier >= tier.threshold ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                      type="button"
+                      className={`text-center p-2 rounded-md cursor-pointer ${commitmentTier === tier.threshold ? "bg-primary text-primary-foreground" : "bg-muted"}`}
                       onClick={() => setCommitmentTier(tier.threshold)}
                     >
                       <div className="text-xs">{tier.threshold}M+</div>
@@ -255,7 +261,7 @@ const AnnualPlanBenefits = ({
                           Price Protection
                         </div>
                       )}
-                    </div>
+                    </button>
                   ))}
                 </div>
 
