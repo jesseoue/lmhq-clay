@@ -46,9 +46,9 @@ const AnnualPlanBenefits = ({
   const [paymentOption, setPaymentOption] = useState("annual");
 
   // Current usage data
-  const currentAnnualCredits = projectedAnnualCredits;
+  const currentAnnualCredits = 4347250; // February 2025 usage
   const currentMonthlyCredits = currentAnnualCredits / 12;
-  const currentAnnualSpend = currentMonthlySpend * 12;
+  const currentAnnualSpend = 417336; // $417,336 annual cost
 
   // Discount tiers (in millions of credits)
   const discountTiers = [
@@ -75,8 +75,8 @@ const AnnualPlanBenefits = ({
     const applicableTier = getApplicableDiscount(commitmentTier);
 
     // Calculate monthly and annual plan costs based on the selected tier
-    const monthlyPlanCost = 40800; // $40,800 base monthly cost at standard rate
-    const yearlyPlanCost = monthlyPlanCost * 12; // $489,600 yearly cost at standard rate
+    const monthlyPlanCost = 34000; // $34,000 base monthly cost at standard rate
+    const yearlyPlanCost = monthlyPlanCost * 12; // $408,000 yearly cost at standard rate
 
     // Calculate annual plan cost based on the discount tier
     const discountPercentage = applicableTier.discount * 100;
@@ -174,7 +174,10 @@ const AnnualPlanBenefits = ({
                 <DollarSign className="h-8 w-8 text-blue-600 mr-3" />
                 <div>
                   <p className="text-3xl font-bold text-gray-900">
-                    ${calculations.monthlyPlanCost.toLocaleString()}
+                    $
+                    {currentMonthlySpend.toLocaleString(undefined, {
+                      maximumFractionDigits: 0,
+                    })}
                   </p>
                   <p className="text-sm text-gray-500">
                     At ${currentCreditRate}/credit
@@ -193,7 +196,7 @@ const AnnualPlanBenefits = ({
                 <TrendingUp className="h-8 w-8 text-orange-500 mr-3" />
                 <div>
                   <p className="text-3xl font-bold text-gray-900">
-                    ${calculations.yearlyPlanCost.toLocaleString()}
+                    ${currentAnnualSpend.toLocaleString()}
                   </p>
                   <p className="text-sm text-gray-500">
                     Without annual discount
@@ -265,12 +268,12 @@ const AnnualPlanBenefits = ({
                   <span>100M</span>
                 </div>
                 <div className="flex items-center justify-center text-xs text-primary font-medium mt-2">
-                  <span>Current usage: 20.5M credits</span>
+                  <span>Current usage: 4.35M credits</span>
                 </div>
                 <div className="mt-4 text-sm">
                   <div className="flex items-center gap-2 text-primary">
                     <CheckCircle className="h-4 w-4" />
-                    <span>Current annual usage: 20.5M credits</span>
+                    <span>Current annual usage: 4.35M credits</span>
                   </div>
                   <div className="flex items-center gap-2 text-green-600 mt-1">
                     <CheckCircle className="h-4 w-4" />
@@ -612,7 +615,7 @@ const AnnualPlanBenefits = ({
           <CardContent className="space-y-4">
             <div className="p-4 bg-card rounded-lg border">
               <h3 className="text-lg font-semibold mb-2">
-                Based on your current usage of 20.5M credits annually
+                Based on your current usage of 4.35M credits annually
               </h3>
               <p className="mb-4">
                 We recommend committing to{" "}
