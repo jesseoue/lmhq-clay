@@ -277,7 +277,7 @@ const AnnualPlanBenefits = ({
               <h3 className="text-lg font-semibold mb-4">
                 Annual Commitment Summary
               </h3>
-              <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-4">
                 <div>
                   <div className="text-sm text-muted-foreground">
                     Monthly Plan Cost
@@ -292,7 +292,7 @@ const AnnualPlanBenefits = ({
 
                 <div>
                   <div className="text-sm text-muted-foreground">
-                    Annual Plan Cost
+                    Monthly with Discount
                   </div>
                   <div className="text-2xl font-bold text-primary">
                     ${calculations.effectiveMonthlyAmount.toLocaleString()}
@@ -305,13 +305,28 @@ const AnnualPlanBenefits = ({
 
                 <div>
                   <div className="text-sm text-muted-foreground">
-                    Your Savings
+                    Annual Total Cost
+                  </div>
+                  <div className="text-2xl font-bold text-primary">
+                    $
+                    {(
+                      calculations.effectiveMonthlyAmount * 12
+                    ).toLocaleString()}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {calculations.discountPercentage}% discount applied
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-sm text-muted-foreground">
+                    Annual Savings
                   </div>
                   <div className="text-2xl font-bold text-green-600">
                     ${calculations.annualSavings.toLocaleString()}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {calculations.discountPercentage}% discount
+                    vs. standard monthly billing
                   </div>
                 </div>
               </div>
