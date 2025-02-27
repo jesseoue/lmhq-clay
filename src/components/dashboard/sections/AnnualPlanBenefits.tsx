@@ -250,6 +250,11 @@ const AnnualPlanBenefits = ({
                     >
                       <div className="text-xs">{tier.threshold}M+</div>
                       <div className="font-bold">{tier.discount * 100}%</div>
+                      {index >= 1 && (
+                        <div className="text-xs mt-1 bg-amber-200 text-amber-800 px-1 rounded-sm font-medium">
+                          Price Protection
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -387,10 +392,19 @@ const AnnualPlanBenefits = ({
                 <li className="flex items-start gap-2">
                   <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                   <span>
-                    <span className="font-bold bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
-                      Price Protection:
-                    </span>{" "}
-                    Lock in per-API credit prices for the entire year
+                    {calculations.discountPercentage >= 15 ? (
+                      <>
+                        <span className="font-bold bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
+                          Credit Price Protection:
+                        </span>{" "}
+                        Lock in per-API credit prices for the entire year
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-bold">Basic Rate Lock:</span> Lock
+                        in your discount rate for 12 months
+                      </>
+                    )}
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -462,6 +476,14 @@ const AnnualPlanBenefits = ({
                             <td className="py-3 px-4">
                               {tier.threshold}M - {nextTierThreshold - 1}M
                               Credits
+                              {index >= 1 && (
+                                <Badge
+                                  variant="outline"
+                                  className="ml-2 bg-amber-100 text-amber-800 border-amber-200"
+                                >
+                                  Price Protection
+                                </Badge>
+                              )}
                               {commitmentTier === tier.threshold && (
                                 <Badge
                                   variant="outline"
@@ -534,10 +556,19 @@ const AnnualPlanBenefits = ({
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                     <span>
-                      <span className="font-bold bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
-                        Price Lock Protection
-                      </span>{" "}
-                      against future rate increases
+                      {calculations.discountPercentage >= 15 ? (
+                        <>
+                          <span className="font-bold bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
+                            Credit Price Protection
+                          </span>{" "}
+                          against future rate increases
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-bold">Basic Rate Lock</span> for
+                          12 months
+                        </>
+                      )}
                     </span>
                   </li>
                 </ul>
@@ -612,9 +643,9 @@ const AnnualPlanBenefits = ({
               <div className="flex items-start gap-4">
                 <Lock className="mt-1 h-5 w-5 text-primary" />
                 <div>
-                  <h4 className="font-semibold">Rate Protection</h4>
+                  <h4 className="font-semibold">Credit Price Protection</h4>
                   <p className="text-sm text-muted-foreground">
-                    Guaranteed price lock for 12 months
+                    Available on 15%+ discount tiers
                   </p>
                 </div>
               </div>
