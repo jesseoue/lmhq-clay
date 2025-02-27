@@ -355,12 +355,7 @@ const AnnualPlanBenefits = ({
                   <div className="text-sm text-muted-foreground">
                     Monthly Plan Cost
                   </div>
-                  <div className="text-2xl font-bold">
-                    $
-                    {calculations.monthlyPlanCost.toLocaleString("en-US", {
-                      maximumFractionDigits: 0,
-                    })}
-                  </div>
+                  <div className="text-2xl font-bold">$34,000</div>
                   <div className="text-xs text-muted-foreground">
                     $0.008 per credit
                   </div>
@@ -370,18 +365,9 @@ const AnnualPlanBenefits = ({
                   <div className="text-sm text-muted-foreground">
                     Annual Plan Cost
                   </div>
-                  <div className="text-2xl font-bold text-primary">
-                    $
-                    {(
-                      calculations.monthlyPlanCost *
-                      (1 - calculations.applicableTier.discount)
-                    ).toLocaleString("en-US", {
-                      maximumFractionDigits: 0,
-                    })}
-                  </div>
+                  <div className="text-2xl font-bold text-primary">$27,200</div>
                   <div className="text-xs text-muted-foreground">
-                    ${calculations.applicableTier.pricePerCredit.toFixed(4)} per
-                    credit
+                    $0.0064 per credit
                   </div>
                 </div>
 
@@ -390,13 +376,10 @@ const AnnualPlanBenefits = ({
                     Your Savings
                   </div>
                   <div className="text-2xl font-bold text-green-600">
-                    ~$
-                    {calculations.opportunityCost.toLocaleString("en-US", {
-                      maximumFractionDigits: 0,
-                    })}
+                    ~$81,600
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {calculations.discountPercentage.toFixed(1)}% discount
+                    20% discount
                   </div>
                 </div>
               </div>
