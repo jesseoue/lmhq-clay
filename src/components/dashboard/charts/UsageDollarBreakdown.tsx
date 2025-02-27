@@ -572,7 +572,7 @@ const UsageDollarBreakdown = ({
                 <div>
                   <p className="text-2xl font-bold">
                     {valueType === "dollars" && "$"}
-                    {valueType === "dollars" ? "34,778.85" : "4,347,355.65"}
+                    {valueType === "dollars" ? "34,000" : "4,347,355.65"}
                     {valueType === "credits" && " credits"}
                   </p>
                   <p className="text-sm text-muted-foreground">
