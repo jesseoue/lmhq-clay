@@ -92,54 +92,43 @@ const AnnualPlanBenefits = ({
   const calculations = useMemo(() => {
     const applicableTier = getApplicableDiscount(commitmentTier);
 
-    // Calculate monthly and annual plan costs
-    const monthlyPlanCost = 34000; // $34,000 base monthly cost at standard rate
-    const yearlyPlanCost = monthlyPlanCost * 12; // $408,000 yearly cost at standard rate
+    // Base monthly cost at standard rate
+    const baseMonthlyRate = 0.008; // $0.008 per credit
 
-    // Calculate annual plan cost based on the discount tier
-    const discountPercentage = applicableTier.discount * 100;
-    const annualPlanCost = monthlyPlanCost * (1 - applicableTier.discount);
-    const monthlySavings = monthlyPlanCost - annualPlanCost;
+    // Calculate costs based on the selected tier's commitment amount
+    const tierCommitmentCredits = applicableTier.annualCommitment;
+    const monthlyCommitmentCredits = tierCommitmentCredits / 12;
 
-    // Calculate annual savings
+    // Calculate standard monthly cost for this commitment level
+    const standardMonthlyAmount = monthlyCommitmentCredits * baseMonthlyRate;
+
+    // Calculate discounted monthly cost
+    const discountedMonthlyAmount =
+      monthlyCommitmentCredits * applicableTier.pricePerCredit;
+
+    // Calculate monthly and annual savings
+    const monthlySavings = standardMonthlyAmount - discountedMonthlyAmount;
     const annualSavings = monthlySavings * 12;
 
-    // Calculate the effective monthly rate
-    const effectiveMonthlyRate = applicableTier.pricePerCredit;
+    // Calculate annual costs
+    const standardAnnualAmount = standardMonthlyAmount * 12;
+    const discountedAnnualAmount = discountedMonthlyAmount * 12;
 
     // Calculate the equivalent months of free service
-    const freeMonthsEquivalent = annualSavings / monthlyPlanCost;
-
-    // Effective monthly amounts based on tier
-    const effectiveMonthlyAmounts = {
-      40: 30600, // 10% discount
-      50: 28900, // 15% discount
-      60: 27200, // 20% discount
-      75: 25500, // 25% discount
-      90: 23800, // 30% discount
-    };
-
-    // Annual savings amounts based on tier
-    const annualSavingsAmounts = {
-      40: 40800, // 10% discount
-      50: 61200, // 15% discount
-      60: 81600, // 20% discount
-      75: 102000, // 25% discount
-      90: 122400, // 30% discount
-    };
+    const freeMonthsEquivalent = annualSavings / standardMonthlyAmount;
 
     return {
       applicableTier,
-      monthlyPlanCost,
-      yearlyPlanCost,
-      annualPlanCost,
+      standardMonthlyAmount,
+      discountedMonthlyAmount,
+      standardAnnualAmount,
+      discountedAnnualAmount,
       monthlySavings,
-      annualSavings: annualSavingsAmounts[commitmentTier] || annualSavings,
-      effectiveMonthlyRate,
-      effectiveMonthlyAmount:
-        effectiveMonthlyAmounts[commitmentTier] || Math.round(annualPlanCost),
+      annualSavings,
       freeMonthsEquivalent,
-      discountPercentage,
+      discountPercentage: applicableTier.discount * 100,
+      monthlyCommitmentCredits,
+      annualCommitmentCredits: tierCommitmentCredits,
     };
   }, [commitmentTier]);
 
@@ -186,14 +175,18 @@ const AnnualPlanBenefits = ({
                 <div>
                   <p className="text-3xl font-bold text-primary">
                     $
-                    {(
-                      calculations.effectiveMonthlyAmount * 12
-                    ).toLocaleString()}
+                    {calculations.discountedAnnualAmount.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
                   </p>
                   <p className="text-sm text-gray-500">
                     ${calculations.applicableTier.pricePerCredit.toFixed(4)}
                     /credit ($
-                    {calculations.effectiveMonthlyAmount.toLocaleString()}
+                    {calculations.discountedMonthlyAmount.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
                     /month)
                   </p>
                 </div>
@@ -210,7 +203,10 @@ const AnnualPlanBenefits = ({
                 <Sparkles className="h-8 w-8 text-white mr-3" />
                 <div>
                   <p className="text-3xl font-bold">
-                    ${calculations.annualSavings.toLocaleString()}
+                    $
+                    {calculations.annualSavings.toLocaleString(undefined, {
+                      maximumFractionDigits: 0,
+                    })}
                   </p>
                   <p className="text-sm text-green-100">
                     {calculations.discountPercentage}% discount
@@ -315,7 +311,11 @@ const AnnualPlanBenefits = ({
                     Monthly Plan Cost
                   </div>
                   <div className="text-2xl font-bold">
-                    ${currentMonthlySpend.toLocaleString()}
+                    $
+                    {calculations.standardMonthlyAmount.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
                   </div>
                   <div className="text-xs text-muted-foreground">
                     $0.008 per credit
@@ -327,7 +327,11 @@ const AnnualPlanBenefits = ({
                     Monthly with Discount
                   </div>
                   <div className="text-2xl font-bold text-primary">
-                    ${calculations.effectiveMonthlyAmount.toLocaleString()}
+                    $
+                    {calculations.discountedMonthlyAmount.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
                   </div>
                   <div className="text-xs text-muted-foreground">
                     ${calculations.applicableTier.pricePerCredit.toFixed(4)} per
@@ -341,13 +345,19 @@ const AnnualPlanBenefits = ({
                   </div>
                   <div className="text-2xl font-bold text-primary">
                     $
-                    {(
-                      calculations.effectiveMonthlyAmount * 12
-                    ).toLocaleString()}
+                    {calculations.discountedAnnualAmount.toLocaleString(
+                      undefined,
+                      { maximumFractionDigits: 0 },
+                    )}
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span className="line-through">
-                      ${(currentMonthlySpend * 12).toLocaleString()} list price
+                      $
+                      {calculations.standardAnnualAmount.toLocaleString(
+                        undefined,
+                        { maximumFractionDigits: 0 },
+                      )}{" "}
+                      list price
                     </span>
                     <span className="text-green-600 font-medium">
                       {calculations.discountPercentage}% off
@@ -360,7 +370,10 @@ const AnnualPlanBenefits = ({
                     Annual Savings
                   </div>
                   <div className="text-2xl font-bold text-green-600">
-                    ${calculations.annualSavings.toLocaleString()}
+                    $
+                    {calculations.annualSavings.toLocaleString(undefined, {
+                      maximumFractionDigits: 0,
+                    })}
                   </div>
                   <div className="text-xs text-muted-foreground">
                     vs. standard monthly billing
@@ -382,7 +395,10 @@ const AnnualPlanBenefits = ({
             <CardContent className="space-y-4">
               <div className="p-4 bg-destructive/5 rounded-lg">
                 <div className="text-3xl font-bold text-destructive">
-                  ${calculations.annualSavings.toLocaleString()}
+                  $
+                  {calculations.annualSavings.toLocaleString(undefined, {
+                    maximumFractionDigits: 0,
+                  })}
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">
                   Money left on the table by staying with monthly billing
@@ -395,7 +411,10 @@ const AnnualPlanBenefits = ({
                   <span>
                     You'll lose{" "}
                     <span className="font-bold">
-                      ${calculations.annualSavings.toLocaleString()}
+                      $
+                      {calculations.annualSavings.toLocaleString(undefined, {
+                        maximumFractionDigits: 0,
+                      })}
                     </span>{" "}
                     in potential savings this year
                   </span>
@@ -405,10 +424,7 @@ const AnnualPlanBenefits = ({
                   <span>
                     That's like missing out on{" "}
                     <span className="font-bold">
-                      {(
-                        calculations.annualSavings / currentMonthlySpend
-                      ).toFixed(1)}{" "}
-                      months
+                      {calculations.freeMonthsEquivalent.toFixed(1)} months
                     </span>{" "}
                     of free service!
                   </span>
@@ -438,7 +454,11 @@ const AnnualPlanBenefits = ({
             <CardContent className="space-y-4">
               <div className="p-4 bg-primary/5 rounded-lg">
                 <div className="text-3xl font-bold text-primary">
-                  ${calculations.effectiveMonthlyAmount.toLocaleString()}
+                  $
+                  {calculations.discountedMonthlyAmount.toLocaleString(
+                    undefined,
+                    { maximumFractionDigits: 0 },
+                  )}
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">
                   Effective monthly cost ($
@@ -471,7 +491,10 @@ const AnnualPlanBenefits = ({
                   <span>
                     Save{" "}
                     <span className="font-bold">
-                      ${calculations.annualSavings.toLocaleString()}
+                      $
+                      {calculations.annualSavings.toLocaleString(undefined, {
+                        maximumFractionDigits: 0,
+                      })}
                     </span>{" "}
                     compared to monthly billing
                   </span>
@@ -518,14 +541,15 @@ const AnnualPlanBenefits = ({
                     </thead>
                     <tbody>
                       {discountTiers.map((tier, index) => {
-                        const nextTierThreshold =
-                          index < discountTiers.length - 1
-                            ? discountTiers[index + 1].threshold
-                            : tier.threshold + 10;
-                        const monthlyCost =
-                          currentMonthlySpend * (1 - tier.discount);
+                        const tierCredits = tier.annualCommitment;
+                        const monthlyCredits = tierCredits / 12;
+                        const standardMonthlyCost = monthlyCredits * 0.008;
+                        const discountedMonthlyCost =
+                          monthlyCredits * tier.pricePerCredit;
+                        const annualStandardCost = standardMonthlyCost * 12;
+                        const annualDiscountedCost = discountedMonthlyCost * 12;
                         const annualSavings =
-                          currentMonthlySpend * tier.discount * 12;
+                          annualStandardCost - annualDiscountedCost;
 
                         return (
                           <tr
@@ -560,13 +584,13 @@ const AnnualPlanBenefits = ({
                             </td>
                             <td className="py-3 px-4">
                               $
-                              {monthlyCost.toLocaleString(undefined, {
+                              {discountedMonthlyCost.toLocaleString(undefined, {
                                 maximumFractionDigits: 0,
                               })}
                             </td>
                             <td className="py-3 px-4 font-medium">
                               $
-                              {(monthlyCost * 12).toLocaleString(undefined, {
+                              {annualDiscountedCost.toLocaleString(undefined, {
                                 maximumFractionDigits: 0,
                               })}
                             </td>
@@ -606,7 +630,10 @@ const AnnualPlanBenefits = ({
                     <span>
                       You'll save{" "}
                       <span className="font-bold">
-                        ${calculations.annualSavings.toLocaleString()}
+                        $
+                        {calculations.annualSavings.toLocaleString(undefined, {
+                          maximumFractionDigits: 0,
+                        })}
                       </span>{" "}
                       annually
                     </span>
@@ -647,7 +674,10 @@ const AnnualPlanBenefits = ({
                   Annual Savings
                 </div>
                 <div className="text-4xl font-bold text-primary mb-2">
-                  ${calculations.annualSavings.toLocaleString()}
+                  $
+                  {calculations.annualSavings.toLocaleString(undefined, {
+                    maximumFractionDigits: 0,
+                  })}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   {calculations.discountPercentage}% off standard pricing
