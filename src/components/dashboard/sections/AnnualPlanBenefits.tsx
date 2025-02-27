@@ -449,9 +449,12 @@ const AnnualPlanBenefits = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="p-4 bg-primary/5 rounded-lg">
-                <div className="text-3xl font-bold text-primary">$28,900</div>
+                <div className="text-3xl font-bold text-primary">
+                  ${calculations.effectiveMonthlyAmount.toLocaleString()}
+                </div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  Effective monthly cost ($0.0068 per credit)
+                  Effective monthly cost ($
+                  {calculations.effectiveMonthlyRate.toFixed(4)} per credit)
                 </div>
               </div>
 
@@ -468,8 +471,14 @@ const AnnualPlanBenefits = ({
                 <li className="flex items-start gap-2">
                   <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                   <span>
-                    Save <span className="font-bold">~$61,200</span> compared to
-                    monthly billing
+                    Save{" "}
+                    <span className="font-bold">
+                      ~$
+                      {calculations.annualSavings.toLocaleString(undefined, {
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>{" "}
+                    compared to monthly billing
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
