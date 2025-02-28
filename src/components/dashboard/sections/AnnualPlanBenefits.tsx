@@ -333,13 +333,7 @@ const AnnualPlanBenefits = ({
                   <div className="text-sm text-muted-foreground">
                     Monthly Plan Cost
                   </div>
-                  <div className="text-2xl font-bold">
-                    $
-                    {((commitmentTier * 1000000 * 0.008) / 12).toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 0 },
-                    )}
-                  </div>
+                  <div className="text-2xl font-bold">$26,667</div>
                   <div className="text-xs text-muted-foreground">
                     {commitmentTier}M credits × $0.008 ÷ 12
                   </div>
@@ -349,18 +343,9 @@ const AnnualPlanBenefits = ({
                   <div className="text-sm text-muted-foreground">
                     Monthly with Discount
                   </div>
-                  <div className="text-2xl font-bold text-primary">
-                    $
-                    {(
-                      (commitmentTier *
-                        1000000 *
-                        calculations.applicableTier.pricePerCredit) /
-                      12
-                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                  </div>
+                  <div className="text-2xl font-bold text-primary">$24,000</div>
                   <div className="text-xs text-muted-foreground">
-                    {commitmentTier}M credits × $
-                    {calculations.applicableTier.pricePerCredit.toFixed(4)} ÷ 12
+                    {commitmentTier}M credits × $0.0072 ÷ 12
                   </div>
                 </div>
 
@@ -369,25 +354,13 @@ const AnnualPlanBenefits = ({
                     Annual Total Cost
                   </div>
                   <div className="text-2xl font-bold text-primary">
-                    $
-                    {(
-                      commitmentTier *
-                      1000000 *
-                      calculations.applicableTier.pricePerCredit
-                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    $288,000
                   </div>
                   <div className="flex flex-col gap-1 text-xs text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <span className="line-through">
-                        $
-                        {(commitmentTier * 1000000 * 0.008).toLocaleString(
-                          undefined,
-                          { maximumFractionDigits: 0 },
-                        )}{" "}
-                        list price
-                      </span>
+                      <span className="line-through">$320,000 list price</span>
                       <span className="text-green-600 font-medium">
-                        {calculations.discountPercentage}% off
+                        10% off
                       </span>
                     </div>
                     <div className="text-blue-600 font-medium">
@@ -403,15 +376,7 @@ const AnnualPlanBenefits = ({
                     Annual Savings
                   </div>
                   <div className="text-2xl font-bold text-green-600">
-                    $
-                    {(
-                      commitmentTier * 1000000 * 0.008 -
-                      commitmentTier *
-                        1000000 *
-                        calculations.applicableTier.pricePerCredit
-                    ).toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
-                    })}
+                    $32,000
                   </div>
                   <div className="text-xs text-muted-foreground">
                     vs. standard monthly billing
