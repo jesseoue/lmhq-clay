@@ -572,7 +572,7 @@ const UsageDollarBreakdown = ({
                 <div>
                   <p className="text-2xl font-bold">
                     {valueType === "dollars" && "$"}
-                    {valueType === "dollars" ? "34,000" : "4,347,355.65"}
+                    {valueType === "dollars" ? "34,778.85" : "4,347,355.65"}
                     {valueType === "credits" && " credits"}
                   </p>
                   <p className="text-sm text-muted-foreground">
@@ -961,7 +961,7 @@ const UsageDollarBreakdown = ({
           <p className="text-sm text-slate-600">
             Email Finder represents your highest{" "}
             {valueType === "dollars" ? "cost" : "usage"} at approximately{" "}
-            {valueType === "dollars" ? "$22,497.90" : "2,812,237 credits"} in
+            {valueType === "dollars" ? "$22,497.90" : "3,547,721 credits"} in
             February 2025, followed by Mobile Finder at{" "}
             {valueType === "dollars" ? "$4,059.48" : "507,435 credits"}.
             Consider optimizing these services for maximum cost efficiency under
