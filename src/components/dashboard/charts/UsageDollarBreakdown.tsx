@@ -158,13 +158,13 @@ const UsageDollarBreakdown = ({
     },
     {
       month: "Feb 2025",
-      emailFinder: 22497.9,
-      emailValidation: 92.99,
-      mobileFinder: 4059.48,
-      companySearch: 878.49,
-      linkedinFinder: 314.72,
-      competitorsSearch: 88.08,
-      personalEmailFinder: 0.35,
+      emailFinder: 28381.77,
+      emailValidation: 120.2,
+      mobileFinder: 4740.04,
+      companySearch: 994.3,
+      linkedinFinder: 392.96,
+      competitorsSearch: 149.2,
+      personalEmailFinder: 0.38,
     },
   ],
   creditData = [
@@ -576,7 +576,7 @@ const UsageDollarBreakdown = ({
                     {valueType === "credits" && " credits"}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Until February 24th, 2025
+                    4.35M credits × $0.008 = $34,778.85
                   </p>
                 </div>
               </div>
@@ -604,7 +604,7 @@ const UsageDollarBreakdown = ({
                     {valueType === "credits" && " credits"}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Dec 2024 - Feb 2025
+                    At $0.008 per credit
                   </p>
                 </div>
               </div>
@@ -632,7 +632,7 @@ const UsageDollarBreakdown = ({
                     {valueType === "credits" && " credits"}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Since Beginning (Apr 2024)
+                    At $0.008 per credit
                   </p>
                 </div>
               </div>
@@ -961,9 +961,9 @@ const UsageDollarBreakdown = ({
           <p className="text-sm text-slate-600">
             Email Finder represents your highest{" "}
             {valueType === "dollars" ? "cost" : "usage"} at approximately{" "}
-            {valueType === "dollars" ? "$22,497.90" : "3,547,721 credits"} in
+            {valueType === "dollars" ? "$28,381.77" : "3,547,721 credits"} in
             February 2025, followed by Mobile Finder at{" "}
-            {valueType === "dollars" ? "$4,059.48" : "507,435 credits"}.
+            {valueType === "dollars" ? "$4,740.04" : "592,505 credits"}.
             Consider optimizing these services for maximum cost efficiency under
             the annual plan.
           </p>

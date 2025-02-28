@@ -35,7 +35,7 @@ const NextSteps = ({
   contactName = "Alex Johnson",
   contactEmail = "alex@clay.com",
   contactPhone = "(555) 123-4567",
-  proposalDate = "June 15, 2023",
+  proposalDate = "February 27, 2024",
   steps = [
     {
       title: "Review Proposal",

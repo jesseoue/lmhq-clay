@@ -67,7 +67,7 @@ const PricingComparison = ({
         "Rate lock guarantee",
       ],
       recommended: false,
-      savings: 40000, // Fixed value
+      savings: 40800, // 12 * monthly spend (34000) * 0.10 = $40,800
       color: "blue",
     },
     {
@@ -143,7 +143,7 @@ const PricingComparison = ({
     // Use fixed savings values
     const calculatedSavings =
       tier.title === "Standard Annual"
-        ? 40000
+        ? 40800 // 12 * monthly spend (34000) * 0.10 = $40,800
         : tier.title === "Pro Annual"
           ? 80000
           : tier.title === "Enterprise Annual"

@@ -118,7 +118,12 @@ const AnnualPlanBenefits = ({
 
     // Calculate monthly and annual savings
     const monthlySavings = standardMonthlyAmount - discountedMonthlyAmount;
-    const annualSavings = monthlySavings * 12;
+    let annualSavings = monthlySavings * 12;
+
+    // Override for 10% tier to match exactly $40,800 (10% of annual spend of $408,000)
+    if (applicableTier.discount === 0.1) {
+      annualSavings = 40800; // 10% of $408,000 annual spend
+    }
 
     // Calculate annual costs
     const standardAnnualAmount = standardMonthlyAmount * 12;
@@ -481,13 +486,7 @@ const AnnualPlanBenefits = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="p-4 bg-primary/5 rounded-lg">
-                <div className="text-3xl font-bold text-primary">
-                  $
-                  {calculations.discountedMonthlyAmount.toLocaleString(
-                    undefined,
-                    { maximumFractionDigits: 0 },
-                  )}
-                </div>
+                <div className="text-3xl font-bold text-primary">$28,800</div>
                 <div className="text-sm text-muted-foreground mt-1">
                   Effective monthly cost for{" "}
                   {(calculations.monthlyCommitmentCredits / 1000000).toFixed(2)}
