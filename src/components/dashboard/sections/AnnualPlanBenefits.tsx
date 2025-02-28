@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -23,6 +23,88 @@ import {
   Lock,
 } from "lucide-react";
 
+// Define discount tiers outside component to prevent recreation on each render
+const DISCOUNT_TIERS = [
+  {
+    threshold: 40,
+    discount: 0.1,
+    pricePerCredit: 0.0072,
+    annualCommitment: 40000000,
+  },
+  {
+    threshold: 50,
+    discount: 0.15,
+    pricePerCredit: 0.0068,
+    annualCommitment: 50000000,
+  },
+  {
+    threshold: 60,
+    discount: 0.2,
+    pricePerCredit: 0.0064,
+    annualCommitment: 60000000,
+  },
+  {
+    threshold: 75,
+    discount: 0.25,
+    pricePerCredit: 0.006,
+    annualCommitment: 75000000,
+  },
+  {
+    threshold: 90,
+    discount: 0.3,
+    pricePerCredit: 0.0056,
+    annualCommitment: 90000000,
+  },
+];
+
+// Extract formatters outside component to prevent recreation
+const formatCurrency = (value, maximumFractionDigits = 2) => {
+  return value.toLocaleString(undefined, {
+    maximumFractionDigits,
+  });
+};
+
+// Define constants
+const BASE_MONTHLY_RATE = 0.008; // $0.008 per credit
+
+// Functions outside component to avoid recreating them on each render
+const getApplicableDiscount = (commitmentInMillions) => {
+  for (let i = DISCOUNT_TIERS.length - 1; i >= 0; i--) {
+    if (commitmentInMillions >= DISCOUNT_TIERS[i].threshold) {
+      return DISCOUNT_TIERS[i];
+    }
+  }
+  return DISCOUNT_TIERS[0];
+};
+
+// Calculate savings from discount (standard price vs. discounted price for same volume)
+const calculateDiscountSavings = (standardAmount, discountedAmount) => {
+  return standardAmount - discountedAmount;
+};
+
+// Calculate difference compared to current spending
+const calculateComparedToCurrentSpend = (
+  currentAnnualSpend,
+  discountedAnnualAmount,
+) => {
+  return currentAnnualSpend - discountedAnnualAmount;
+};
+
+const calculateSavingsPercentage = (annualSavings, currentAnnualSpend) => {
+  return Math.round((annualSavings / currentAnnualSpend) * 100);
+};
+
+// Service breakdown breakdown - moved outside component
+const SERVICE_BREAKDOWN = {
+  emailFinder: 22497.9,
+  emailValidation: 92.99,
+  mobileFinder: 4059.48,
+  companySearch: 878.49,
+  linkedinFinder: 314.72,
+  competitorsSearch: 88.08,
+  personalEmailFinder: 0.35,
+};
+
 interface AnnualPlanBenefitsProps {
   clientName?: string;
   currentMonthlySpend?: number;
@@ -39,101 +121,59 @@ const AnnualPlanBenefits = ({
   // State for commitment tier (in millions of credits)
   const [commitmentTier, setCommitmentTier] = useState(40);
 
-  // Current usage data from February 2025
-  const currentMonthlyCredits = 4347355.65; // February 2025 monthly usage (4.35M credits)
-  const currentAnnualSpend = currentMonthlySpend * 12; // Annual cost based on current monthly spend
+  // Current usage data - memoize values derived from props
+  const currentMonthlyCredits = useMemo(() => 4347355.65, []); // Constant value, could be a parameter
+  const currentAnnualSpend = useMemo(
+    () => currentMonthlySpend * 12,
+    [currentMonthlySpend],
+  );
 
-  // February 2025 service breakdown
-  const serviceBreakdown = {
-    emailFinder: 22497.9,
-    emailValidation: 92.99,
-    mobileFinder: 4059.48,
-    companySearch: 878.49,
-    linkedinFinder: 314.72,
-    competitorsSearch: 88.08,
-    personalEmailFinder: 0.35,
-  };
-
-  // Discount tiers (in millions of credits)
-  const discountTiers = [
-    {
-      threshold: 40,
-      discount: 0.1,
-      pricePerCredit: 0.0072,
-      annualCommitment: 40000000,
-    },
-    {
-      threshold: 50,
-      discount: 0.15,
-      pricePerCredit: 0.0068,
-      annualCommitment: 50000000,
-    },
-    {
-      threshold: 60,
-      discount: 0.2,
-      pricePerCredit: 0.0064,
-      annualCommitment: 60000000,
-    },
-    {
-      threshold: 75,
-      discount: 0.25,
-      pricePerCredit: 0.006,
-      annualCommitment: 75000000,
-    },
-    {
-      threshold: 90,
-      discount: 0.3,
-      pricePerCredit: 0.0056,
-      annualCommitment: 90000000,
-    },
-  ];
-
-  // Calculate the applicable discount based on commitment tier
-  const getApplicableDiscount = (commitmentInMillions: number) => {
-    for (let i = discountTiers.length - 1; i >= 0; i--) {
-      if (commitmentInMillions >= discountTiers[i].threshold) {
-        return discountTiers[i];
-      }
-    }
-    return discountTiers[0];
-  };
-
-  // Calculate pricing and savings
+  // Calculate pricing and savings with all dependencies included
   const calculations = useMemo(() => {
     const applicableTier = getApplicableDiscount(commitmentTier);
-
-    // Base monthly cost at standard rate
-    const baseMonthlyRate = 0.008; // $0.008 per credit
-
-    // Calculate costs based on the selected tier's commitment amount
     const tierCommitmentCredits = applicableTier.annualCommitment;
     const monthlyCommitmentCredits = tierCommitmentCredits / 12;
 
-    // Calculate standard monthly cost for this commitment level
-    // Explicitly use commitmentTier * 1,000,000 * 0.008 / 12 for monthly cost
+    // Standard calculations
     const standardMonthlyAmount =
-      (commitmentTier * 1000000 * baseMonthlyRate) / 12;
+      (commitmentTier * 1000000 * BASE_MONTHLY_RATE) / 12;
+    const standardAnnualAmount = commitmentTier * 1000000 * BASE_MONTHLY_RATE;
 
-    // Calculate discounted monthly cost
+    // Discounted calculations
     const discountedMonthlyAmount =
       (commitmentTier * 1000000 * applicableTier.pricePerCredit) / 12;
-
-    // Calculate monthly and annual savings
-    const monthlySavings = standardMonthlyAmount - discountedMonthlyAmount;
-    let annualSavings = monthlySavings * 12;
-
-    // Calculate annual costs
-    const standardAnnualAmount = commitmentTier * 1000000 * baseMonthlyRate;
     const discountedAnnualAmount =
       commitmentTier * 1000000 * applicableTier.pricePerCredit;
 
-    // Calculate the equivalent months of free service
-    const freeMonthsEquivalent = annualSavings / currentMonthlySpend;
+    // Savings calculations
+    const monthlySavings = standardMonthlyAmount - discountedMonthlyAmount;
 
-    // For display purposes - show how much more volume they're getting
+    // Discount savings (savings from the discount itself)
+    const discountSavings = calculateDiscountSavings(
+      standardAnnualAmount,
+      discountedAnnualAmount,
+    );
+    const discountSavingsPercentage = Math.round(
+      (discountSavings / standardAnnualAmount) * 100,
+    );
+
+    // Comparison to current spending
+    const comparedToCurrentSpend = calculateComparedToCurrentSpend(
+      currentAnnualSpend,
+      discountedAnnualAmount,
+    );
+    const comparedToCurrentSpendPercentage = calculateSavingsPercentage(
+      comparedToCurrentSpend,
+      currentAnnualSpend,
+    );
+
+    // Additional metrics
+    const freeMonthsEquivalent = comparedToCurrentSpend / currentMonthlySpend;
     const volumeIncrease =
       tierCommitmentCredits > currentMonthlyCredits * 12
-        ? (tierCommitmentCredits / (currentMonthlyCredits * 12) - 1) * 100
+        ? Math.round(
+            (tierCommitmentCredits / (currentMonthlyCredits * 12) - 1) * 100,
+          )
         : 0;
 
     return {
@@ -143,14 +183,161 @@ const AnnualPlanBenefits = ({
       standardAnnualAmount,
       discountedAnnualAmount,
       monthlySavings,
-      annualSavings,
+      discountSavings,
+      discountSavingsPercentage,
+      comparedToCurrentSpend,
+      comparedToCurrentSpendPercentage,
       freeMonthsEquivalent,
       discountPercentage: applicableTier.discount * 100,
       monthlyCommitmentCredits,
       annualCommitmentCredits: tierCommitmentCredits,
       volumeIncrease,
+      formattedDiscountSavings: formatCurrency(discountSavings, 0),
+      formattedComparedToCurrentSpend: formatCurrency(
+        Math.abs(comparedToCurrentSpend),
+        0,
+      ),
+      isIncreasedCost: comparedToCurrentSpend < 0,
+      formattedDiscountedMonthlyAmount: formatCurrency(
+        discountedMonthlyAmount,
+        0,
+      ),
+      formattedDiscountedAnnualAmount: formatCurrency(
+        discountedAnnualAmount,
+        0,
+      ),
+      formattedFreeMonthsEquivalent: freeMonthsEquivalent.toFixed(1),
     };
-  }, [commitmentTier, currentMonthlyCredits, currentMonthlySpend]);
+  }, [
+    commitmentTier,
+    currentMonthlyCredits,
+    currentMonthlySpend,
+    currentAnnualSpend,
+  ]);
+
+  // Memoize tier selection handler
+  const handleTierSelection = useCallback((tier) => {
+    setCommitmentTier(tier);
+  }, []);
+
+  // Memoize the tier items to prevent unnecessary recalculations
+  const discountTierItems = useMemo(() => {
+    return DISCOUNT_TIERS.map((tier, index) => {
+      const tierCredits = tier.annualCommitment;
+      const monthlyCredits = tierCredits / 12;
+      const standardMonthlyCost = monthlyCredits * BASE_MONTHLY_RATE;
+      const discountedMonthlyCost = monthlyCredits * tier.pricePerCredit;
+      const annualStandardCost = standardMonthlyCost * 12;
+      const annualDiscountedCost = discountedMonthlyCost * 12;
+      const annualSavings = annualStandardCost - annualDiscountedCost;
+
+      // Pre-calculate required values for the table
+      return {
+        tier,
+        index,
+        formattedDiscountedMonthlyCost: formatCurrency(
+          discountedMonthlyCost,
+          0,
+        ),
+        formattedAnnualDiscountedCost: formatCurrency(annualDiscountedCost, 0),
+        formattedAnnualSavings: formatCurrency(annualSavings, 0),
+        hasProtection: index >= 1,
+        isSelected: commitmentTier === tier.threshold,
+      };
+    });
+  }, [commitmentTier]);
+
+  // Benefit list items - memoize to avoid recreation
+  const benefitItems = useMemo(
+    () => [
+      {
+        icon: <CheckCircle className="h-5 w-5 text-primary mt-0.5" />,
+        text:
+          calculations.discountPercentage >= 15 ? (
+            <>
+              <span className="font-bold bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
+                Credit Price Protection:
+              </span>{" "}
+              Lock in per-API credit prices for the entire year
+            </>
+          ) : (
+            <>
+              <span className="font-bold">Basic Rate Lock:</span> Lock in your
+              discount rate for 12 months
+            </>
+          ),
+      },
+      {
+        icon: <CheckCircle className="h-5 w-5 text-primary mt-0.5" />,
+        text: (
+          <>
+            Save{" "}
+            <span className="font-bold">
+              ${calculations.formattedDiscountSavings}
+            </span>{" "}
+            compared to standard pricing
+          </>
+        ),
+      },
+      {
+        icon: <CheckCircle className="h-5 w-5 text-primary mt-0.5" />,
+        text: "Priority API access and dedicated account management",
+      },
+    ],
+    [calculations.discountPercentage, calculations.formattedDiscountSavings],
+  );
+
+  // Cost of not switching items - memoize to avoid recreation
+  const costOfNotSwitchingItems = useMemo(
+    () => [
+      {
+        icon: <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />,
+        text: (
+          <>
+            You'll lose{" "}
+            <span className="font-bold">
+              ${calculations.formattedDiscountSavings}
+            </span>{" "}
+            in potential discount savings this year
+          </>
+        ),
+      },
+      {
+        icon: <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />,
+        text: (
+          <>
+            You'll pay{" "}
+            <span className="font-bold">
+              ${formatCurrency(calculations.standardAnnualAmount, 0)}
+            </span>{" "}
+            instead of{" "}
+            <span className="font-bold">
+              ${calculations.formattedDiscountedAnnualAmount}
+            </span>
+          </>
+        ),
+      },
+      {
+        icon: <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />,
+        text: (
+          <>
+            You'll need to commit to purchasing {commitmentTier}M credits
+            annually to get this rate
+          </>
+        ),
+      },
+      {
+        icon: <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />,
+        text: "No protection against potential price increases",
+      },
+    ],
+    [
+      calculations.formattedDiscountSavings,
+      calculations.standardAnnualAmount,
+      calculations.formattedDiscountedAnnualAmount,
+      commitmentTier,
+    ],
+  );
 
   return (
     <div className="w-full h-full bg-slate-50 p-6 overflow-y-auto">
@@ -165,7 +352,7 @@ const AnnualPlanBenefits = ({
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="bg-white shadow-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg">Current Monthly Cost</CardTitle>
@@ -175,7 +362,7 @@ const AnnualPlanBenefits = ({
                 <DollarSign className="h-8 w-8 text-blue-600 mr-3" />
                 <div>
                   <p className="text-3xl font-bold text-gray-900">
-                    ${currentMonthlySpend.toLocaleString()}
+                    ${formatCurrency(currentMonthlySpend)}
                   </p>
                   <p className="text-sm text-gray-500">
                     At ${currentCreditRate}/credit
@@ -194,19 +381,11 @@ const AnnualPlanBenefits = ({
                 <TrendingUp className="h-8 w-8 text-primary mr-3" />
                 <div>
                   <p className="text-3xl font-bold text-primary">
-                    $
-                    {calculations.discountedAnnualAmount.toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 0 },
-                    )}
+                    ${calculations.formattedDiscountedAnnualAmount}
                   </p>
                   <p className="text-sm text-gray-500">
                     ${calculations.applicableTier.pricePerCredit.toFixed(4)}
-                    /credit ($
-                    {calculations.discountedMonthlyAmount.toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 0 },
-                    )}
+                    /credit (${calculations.formattedDiscountedMonthlyAmount}
                     /month)
                   </p>
                 </div>
@@ -216,20 +395,50 @@ const AnnualPlanBenefits = ({
 
           <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white shadow-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Annual Savings</CardTitle>
+              <CardTitle className="text-lg">Discount Savings</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center">
                 <Sparkles className="h-8 w-8 text-white mr-3" />
                 <div>
                   <p className="text-3xl font-bold">
-                    $
-                    {calculations.annualSavings.toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
-                    })}
+                    ${calculations.formattedDiscountSavings}
                   </p>
                   <p className="text-sm text-green-100">
-                    {calculations.discountPercentage}% discount
+                    {calculations.discountSavingsPercentage}% off standard price
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            className={`${calculations.isIncreasedCost ? "bg-amber-50 border-amber-200" : "bg-green-50 border-green-200"} shadow-sm`}
+          >
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">
+                Compared to Current Spend
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center">
+                {calculations.isIncreasedCost ? (
+                  <AlertTriangle className="h-8 w-8 text-amber-500 mr-3" />
+                ) : (
+                  <CheckCircle className="h-8 w-8 text-green-500 mr-3" />
+                )}
+                <div>
+                  <p
+                    className={`text-3xl font-bold ${calculations.isIncreasedCost ? "text-amber-600" : "text-green-600"}`}
+                  >
+                    {calculations.isIncreasedCost ? "+" : "-"}$
+                    {calculations.formattedComparedToCurrentSpend}
+                  </p>
+                  <p
+                    className={`text-sm ${calculations.isIncreasedCost ? "text-amber-600" : "text-green-600"}`}
+                  >
+                    {calculations.isIncreasedCost ? "Increase" : "Savings"} vs.
+                    current ${formatCurrency(currentAnnualSpend, 0)}/year
                   </p>
                 </div>
               </div>
@@ -274,8 +483,8 @@ const AnnualPlanBenefits = ({
                 </div>
                 <div className="flex items-center justify-center text-xs text-primary font-medium mt-2">
                   <span>
-                    Current usage: 4.35M credits/month (~52.2M/year) at
-                    $34,779/month
+                    Current usage: 4.35M credits/month (~52.2M/year) at $
+                    {formatCurrency(currentMonthlySpend, 0)}/month
                   </span>
                 </div>
               </div>
@@ -292,12 +501,16 @@ const AnnualPlanBenefits = ({
                 </div>
 
                 <div className="grid grid-cols-5 gap-1">
-                  {discountTiers.map((tier, index) => (
+                  {DISCOUNT_TIERS.map((tier, index) => (
                     <button
                       key={index}
                       type="button"
-                      className={`text-center p-2 rounded-md cursor-pointer ${commitmentTier === tier.threshold ? "bg-primary text-primary-foreground" : "bg-muted"}`}
-                      onClick={() => setCommitmentTier(tier.threshold)}
+                      className={`text-center p-2 rounded-md cursor-pointer ${
+                        commitmentTier === tier.threshold
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted"
+                      }`}
+                      onClick={() => handleTierSelection(tier.threshold)}
                     >
                       <div className="text-xs">{tier.threshold}M</div>
                       <div className="font-bold">{tier.discount * 100}%</div>
@@ -333,9 +546,11 @@ const AnnualPlanBenefits = ({
                   <div className="text-sm text-muted-foreground">
                     Monthly Plan Cost
                   </div>
-                  <div className="text-2xl font-bold">$26,667</div>
+                  <div className="text-2xl font-bold">
+                    ${formatCurrency(calculations.standardMonthlyAmount, 0)}
+                  </div>
                   <div className="text-xs text-muted-foreground">
-                    {commitmentTier}M credits × $0.008 ÷ 12
+                    {commitmentTier}M credits × ${BASE_MONTHLY_RATE} ÷ 12
                   </div>
                 </div>
 
@@ -343,9 +558,12 @@ const AnnualPlanBenefits = ({
                   <div className="text-sm text-muted-foreground">
                     Monthly with Discount
                   </div>
-                  <div className="text-2xl font-bold text-primary">$24,000</div>
+                  <div className="text-2xl font-bold text-primary">
+                    ${calculations.formattedDiscountedMonthlyAmount}
+                  </div>
                   <div className="text-xs text-muted-foreground">
-                    {commitmentTier}M credits × $0.0072 ÷ 12
+                    {commitmentTier}M credits × $
+                    {calculations.applicableTier.pricePerCredit.toFixed(4)} ÷ 12
                   </div>
                 </div>
 
@@ -354,32 +572,35 @@ const AnnualPlanBenefits = ({
                     Annual Total Cost
                   </div>
                   <div className="text-2xl font-bold text-primary">
-                    $288,000
+                    ${calculations.formattedDiscountedAnnualAmount}
                   </div>
                   <div className="flex flex-col gap-1 text-xs text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <span className="line-through">$320,000 list price</span>
+                      <span className="line-through">
+                        ${formatCurrency(calculations.standardAnnualAmount, 0)}{" "}
+                        standard price
+                      </span>
                       <span className="text-green-600 font-medium">
-                        10% off
+                        {calculations.discountSavingsPercentage}% off
                       </span>
                     </div>
                     <div className="text-blue-600 font-medium">
-                      {commitmentTier}M credits (
-                      {Math.round(calculations.volumeIncrease)}% more volume
-                      than current usage)
+                      {commitmentTier}M credits ({calculations.volumeIncrease}%
+                      more volume than current usage)
                     </div>
                   </div>
                 </div>
 
                 <div>
                   <div className="text-sm text-muted-foreground">
-                    Annual Savings
+                    Discount Savings
                   </div>
                   <div className="text-2xl font-bold text-green-600">
-                    $32,000
+                    ${calculations.formattedDiscountSavings}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    vs. standard monthly billing
+                    {calculations.discountSavingsPercentage}% off standard price
+                    of ${formatCurrency(calculations.standardAnnualAmount, 0)}
                   </div>
                 </div>
               </div>
@@ -398,52 +619,22 @@ const AnnualPlanBenefits = ({
             <CardContent className="space-y-4">
               <div className="p-4 bg-destructive/5 rounded-lg">
                 <div className="text-3xl font-bold text-destructive">
-                  $
-                  {calculations.annualSavings.toLocaleString(undefined, {
-                    maximumFractionDigits: 0,
-                  })}
+                  ${calculations.formattedDiscountSavings}
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  Money left on the table by staying with monthly billing at{" "}
-                  {commitmentTier}M credit volume
+                  Savings missed by not taking the{" "}
+                  {calculations.discountPercentage}% discount on{" "}
+                  {commitmentTier}M credits
                 </div>
               </div>
 
               <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
-                  <span>
-                    You'll lose{" "}
-                    <span className="font-bold">
-                      $
-                      {calculations.annualSavings.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}
-                    </span>{" "}
-                    in potential savings this year
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
-                  <span>
-                    That's like missing out on{" "}
-                    <span className="font-bold">
-                      {calculations.freeMonthsEquivalent.toFixed(1)} months
-                    </span>{" "}
-                    of free service!
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
-                  <span>
-                    You'll need to commit to purchasing {commitmentTier}M
-                    credits annually to get this rate
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
-                  <span>No protection against potential price increases</span>
-                </li>
+                {costOfNotSwitchingItems.map((item, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    {item.icon}
+                    <span>{item.text}</span>
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
@@ -457,54 +648,31 @@ const AnnualPlanBenefits = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="p-4 bg-primary/5 rounded-lg">
-                <div className="text-3xl font-bold text-primary">$28,800</div>
+                <div className="text-3xl font-bold text-primary">
+                  ${calculations.formattedDiscountedMonthlyAmount}
+                </div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  Effective monthly cost for{" "}
-                  {(calculations.monthlyCommitmentCredits / 1000000).toFixed(2)}
-                  M credits ($
-                  {calculations.applicableTier.pricePerCredit.toFixed(4)} per
-                  credit)
+                  Effective monthly cost vs. current $
+                  {formatCurrency(currentMonthlySpend, 0)}/month
+                  <div className="mt-1 text-green-600 font-medium">
+                    Save $
+                    {formatCurrency(
+                      currentMonthlySpend -
+                        calculations.discountedMonthlyAmount,
+                      0,
+                    )}
+                    /month
+                  </div>
                 </div>
               </div>
 
               <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
-                  <span>
-                    {calculations.discountPercentage >= 15 ? (
-                      <>
-                        <span className="font-bold bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
-                          Credit Price Protection:
-                        </span>{" "}
-                        Lock in per-API credit prices for the entire year
-                      </>
-                    ) : (
-                      <>
-                        <span className="font-bold">Basic Rate Lock:</span> Lock
-                        in your discount rate for 12 months
-                      </>
-                    )}
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
-                  <span>
-                    Save{" "}
-                    <span className="font-bold">
-                      $
-                      {calculations.annualSavings.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}
-                    </span>{" "}
-                    compared to monthly billing
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
-                  <span>
-                    Priority API access and dedicated account management
-                  </span>
-                </li>
+                {benefitItems.map((item, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    {item.icon}
+                    <span>{item.text}</span>
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
@@ -540,26 +708,24 @@ const AnnualPlanBenefits = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {discountTiers.map((tier, index) => {
-                        const tierCredits = tier.annualCommitment;
-                        const monthlyCredits = tierCredits / 12;
-                        const standardMonthlyCost = monthlyCredits * 0.008;
-                        const discountedMonthlyCost =
-                          monthlyCredits * tier.pricePerCredit;
-                        const annualStandardCost = standardMonthlyCost * 12;
-                        const annualDiscountedCost = discountedMonthlyCost * 12;
-                        const annualSavings =
-                          annualStandardCost - annualDiscountedCost;
-
-                        return (
+                      {discountTierItems.map(
+                        ({
+                          tier,
+                          index,
+                          formattedDiscountedMonthlyCost,
+                          formattedAnnualDiscountedCost,
+                          formattedAnnualSavings,
+                          hasProtection,
+                          isSelected,
+                        }) => (
                           <tr
                             key={index}
-                            className={`border-b cursor-pointer ${commitmentTier === tier.threshold ? "bg-primary/5 font-medium" : ""}`}
-                            onClick={() => setCommitmentTier(tier.threshold)}
+                            className={`border-b cursor-pointer ${isSelected ? "bg-primary/5 font-medium" : ""}`}
+                            onClick={() => handleTierSelection(tier.threshold)}
                           >
                             <td className="py-3 px-4">
                               {tier.threshold}M Credits
-                              {index >= 1 && (
+                              {hasProtection && (
                                 <Badge
                                   variant="outline"
                                   className="ml-2 bg-amber-100 text-amber-800 border-amber-200"
@@ -567,7 +733,7 @@ const AnnualPlanBenefits = ({
                                   Price Protection
                                 </Badge>
                               )}
-                              {commitmentTier === tier.threshold && (
+                              {isSelected && (
                                 <Badge
                                   variant="outline"
                                   className="ml-2 bg-primary text-primary-foreground"
@@ -583,26 +749,17 @@ const AnnualPlanBenefits = ({
                               {tier.discount * 100}%
                             </td>
                             <td className="py-3 px-4">
-                              $
-                              {discountedMonthlyCost.toLocaleString(undefined, {
-                                maximumFractionDigits: 0,
-                              })}
+                              ${formattedDiscountedMonthlyCost}
                             </td>
                             <td className="py-3 px-4 font-medium">
-                              $
-                              {annualDiscountedCost.toLocaleString(undefined, {
-                                maximumFractionDigits: 0,
-                              })}
+                              ${formattedAnnualDiscountedCost}
                             </td>
                             <td className="py-3 px-4 text-green-600">
-                              $
-                              {annualSavings.toLocaleString(undefined, {
-                                maximumFractionDigits: 0,
-                              })}
+                              ${formattedAnnualSavings}
                             </td>
                           </tr>
-                        );
-                      })}
+                        ),
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -630,12 +787,9 @@ const AnnualPlanBenefits = ({
                     <span>
                       You'll save{" "}
                       <span className="font-bold">
-                        $
-                        {calculations.annualSavings.toLocaleString(undefined, {
-                          maximumFractionDigits: 0,
-                        })}
+                        ${calculations.formattedDiscountSavings}
                       </span>{" "}
-                      annually
+                      annually compared to standard pricing
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
@@ -674,14 +828,11 @@ const AnnualPlanBenefits = ({
                   Annual Savings
                 </div>
                 <div className="text-4xl font-bold text-primary mb-2">
-                  $
-                  {calculations.annualSavings.toLocaleString(undefined, {
-                    maximumFractionDigits: 0,
-                  })}
+                  ${calculations.formattedDiscountSavings}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {calculations.discountPercentage}% off standard pricing for{" "}
-                  {commitmentTier}M credits
+                  {calculations.discountSavingsPercentage}% off standard price
+                  of ${formatCurrency(calculations.standardAnnualAmount, 0)}
                 </div>
               </div>
             </div>
