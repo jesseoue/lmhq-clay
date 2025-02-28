@@ -26,12 +26,6 @@ import {
 // Define discount tiers outside component to prevent recreation on each render
 const DISCOUNT_TIERS = [
   {
-    threshold: 40,
-    discount: 0.1,
-    pricePerCredit: 0.0072,
-    annualCommitment: 40000000,
-  },
-  {
     threshold: 50,
     discount: 0.15,
     pricePerCredit: 0.0068,
@@ -119,7 +113,7 @@ const AnnualPlanBenefits = ({
   projectedAnnualCredits = 50000000,
 }: AnnualPlanBenefitsProps) => {
   // State for commitment tier (in millions of credits)
-  const [commitmentTier, setCommitmentTier] = useState(40);
+  const [commitmentTier, setCommitmentTier] = useState(50);
 
   // Current usage data - memoize values derived from props
   const currentMonthlyCredits = useMemo(() => 4347355.65, []); // Constant value, could be a parameter
@@ -352,7 +346,7 @@ const AnnualPlanBenefits = ({
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="bg-white shadow-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg">Current Monthly Cost</CardTitle>
@@ -411,39 +405,6 @@ const AnnualPlanBenefits = ({
               </div>
             </CardContent>
           </Card>
-
-          <Card
-            className={`${calculations.isIncreasedCost ? "bg-amber-50 border-amber-200" : "bg-green-50 border-green-200"} shadow-sm`}
-          >
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">
-                Compared to Current Spend
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center">
-                {calculations.isIncreasedCost ? (
-                  <AlertTriangle className="h-8 w-8 text-amber-500 mr-3" />
-                ) : (
-                  <CheckCircle className="h-8 w-8 text-green-500 mr-3" />
-                )}
-                <div>
-                  <p
-                    className={`text-3xl font-bold ${calculations.isIncreasedCost ? "text-amber-600" : "text-green-600"}`}
-                  >
-                    {calculations.isIncreasedCost ? "+" : "-"}$
-                    {calculations.formattedComparedToCurrentSpend}
-                  </p>
-                  <p
-                    className={`text-sm ${calculations.isIncreasedCost ? "text-amber-600" : "text-green-600"}`}
-                  >
-                    {calculations.isIncreasedCost ? "Increase" : "Savings"} vs.
-                    current ${formatCurrency(currentAnnualSpend, 0)}/year
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         <Card className="bg-white shadow-sm mb-8">
@@ -466,16 +427,15 @@ const AnnualPlanBenefits = ({
                   </Badge>
                 </div>
                 <Slider
-                  defaultValue={[40]}
+                  defaultValue={[50]}
                   value={[commitmentTier]}
-                  min={40}
+                  min={50}
                   max={90}
                   step={10}
                   onValueChange={(value) => setCommitmentTier(value[0])}
                   className="py-4"
                 />
                 <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>40M</span>
                   <span>50M</span>
                   <span>60M</span>
                   <span>75M</span>
@@ -483,8 +443,14 @@ const AnnualPlanBenefits = ({
                 </div>
                 <div className="flex items-center justify-center text-xs text-primary font-medium mt-2">
                   <span>
-                    Current usage: 4.35M credits/month (~52.2M/year) at $
-                    {formatCurrency(currentMonthlySpend, 0)}/month
+                    Monthly Spend (February): $
+                    {formatCurrency(currentMonthlySpend)} |{" "}
+                    {formatCurrency(4347356, 0)} credits
+                    <br />
+                    Annual Run Rate: ${formatCurrency(
+                      currentAnnualSpend,
+                      0,
+                    )} | {formatCurrency(52168268, 0)} credits
                   </span>
                 </div>
               </div>
@@ -500,7 +466,7 @@ const AnnualPlanBenefits = ({
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-5 gap-1">
+                <div className="grid grid-cols-4 gap-1">
                   {DISCOUNT_TIERS.map((tier, index) => (
                     <button
                       key={index}
@@ -514,7 +480,7 @@ const AnnualPlanBenefits = ({
                     >
                       <div className="text-xs">{tier.threshold}M</div>
                       <div className="font-bold">{tier.discount * 100}%</div>
-                      {index >= 1 && (
+                      {index >= 0 && (
                         <div className="text-xs mt-1 bg-amber-200 text-amber-800 px-1 rounded-sm font-medium">
                           Price Protection
                         </div>
