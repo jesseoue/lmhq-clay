@@ -202,14 +202,13 @@ const NextSteps = ({
                 Ready to move forward?
               </h2>
               <p className="text-gray-600 max-w-xl">
-                Sign your annual agreement today and start enjoying the benefits
-                of predictable pricing, priority support, and significant cost
-                savings.
+                Enjoy the benefits of predictable pricing, priority support, and
+                significant cost savings with an annual plan.
               </p>
             </div>
             <div class="md:mt-0">
               <Button size="lg" className="font-semibold">
-                Sign Annual Agreement
+                Learn More
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>

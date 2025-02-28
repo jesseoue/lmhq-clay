@@ -401,6 +401,21 @@ const UsageDollarBreakdown = ({
 
   const { totalLastMonth, totalAllTime } = calculateTotals();
 
+  // Format Y-axis ticks
+  const formatYAxis = (value: number) => {
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
+    return value;
+  };
+
+  // Format large numbers with abbreviations
+  const formatLargeNumber = (value: number) => {
+    if (!value) return "0";
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
+    return value.toLocaleString();
+  };
+
   // Custom tooltip for the charts
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -423,7 +438,11 @@ const UsageDollarBreakdown = ({
               </div>
               <span className="text-sm font-medium">
                 {valueType === "dollars" ? "$" : ""}
-                {entry.value.toLocaleString()}
+                {valueType === "credits" && entry.value >= 1000000
+                  ? `${(entry.value / 1000000).toFixed(1)}M`
+                  : valueType === "credits" && entry.value >= 1000
+                    ? `${(entry.value / 1000).toFixed(1)}k`
+                    : entry.value.toLocaleString()}
                 {valueType === "credits" ? " credits" : ""}
               </span>
             </div>
@@ -433,7 +452,11 @@ const UsageDollarBreakdown = ({
               <span className="text-sm font-medium">Total:</span>
               <span className="text-sm font-bold">
                 {valueType === "dollars" ? "$" : ""}
-                {total.toLocaleString()}
+                {valueType === "credits" && total >= 1000000
+                  ? `${(total / 1000000).toFixed(1)}M`
+                  : valueType === "credits" && total >= 1000
+                    ? `${(total / 1000).toFixed(1)}k`
+                    : total.toLocaleString()}
                 {valueType === "credits" ? " credits" : ""}
               </span>
             </div>
@@ -442,13 +465,6 @@ const UsageDollarBreakdown = ({
       );
     }
     return null;
-  };
-
-  // Format Y-axis ticks
-  const formatYAxis = (value: number) => {
-    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
-    if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
-    return value;
   };
 
   // Handle service selection
@@ -572,7 +588,7 @@ const UsageDollarBreakdown = ({
                 <div>
                   <p className="text-2xl font-bold">
                     {valueType === "dollars" && "$"}
-                    {valueType === "dollars" ? "34,778.85" : "4,347,355.65"}
+                    {valueType === "dollars" ? "34,778.85" : "4.3M"}
                     {valueType === "credits" && " credits"}
                   </p>
                   <p className="text-sm text-muted-foreground">
@@ -600,7 +616,7 @@ const UsageDollarBreakdown = ({
                 <div>
                   <p className="text-2xl font-bold">
                     {valueType === "dollars" && "$"}
-                    {valueType === "dollars" ? "26,017.91" : "3,252,238.68"}
+                    {valueType === "dollars" ? "26,017.91" : "3.3M"}
                     {valueType === "credits" && " credits"}
                   </p>
                   <p className="text-sm text-muted-foreground">
@@ -628,7 +644,7 @@ const UsageDollarBreakdown = ({
                 <div>
                   <p className="text-2xl font-bold">
                     {valueType === "dollars" && "$"}
-                    {valueType === "dollars" ? "14,901.06" : "1,862,632.50"}
+                    {valueType === "dollars" ? "14,901.06" : "1.9M"}
                     {valueType === "credits" && " credits"}
                   </p>
                   <p className="text-sm text-muted-foreground">
@@ -961,11 +977,10 @@ const UsageDollarBreakdown = ({
           <p className="text-sm text-slate-600">
             Email Finder represents your highest{" "}
             {valueType === "dollars" ? "cost" : "usage"} at approximately{" "}
-            {valueType === "dollars" ? "$28,381.77" : "3,547,721 credits"} in
+            {valueType === "dollars" ? "$28,381.77" : "3.5M credits"} in
             February 2025, followed by Mobile Finder at{" "}
-            {valueType === "dollars" ? "$4,740.04" : "592,505 credits"}.
-            Consider optimizing these services for maximum cost efficiency under
-            the annual plan.
+            {valueType === "dollars" ? "$4,740.04" : "592.5k credits"}. Consider
+            optimizing these services for maximum cost efficiency.
           </p>
         </div>
       </CardContent>

@@ -110,24 +110,22 @@ const AnnualPlanBenefits = ({
     const monthlyCommitmentCredits = tierCommitmentCredits / 12;
 
     // Calculate standard monthly cost for this commitment level
-    const standardMonthlyAmount = monthlyCommitmentCredits * baseMonthlyRate;
+    // Explicitly use commitmentTier * 1,000,000 * 0.008 / 12 for monthly cost
+    const standardMonthlyAmount =
+      (commitmentTier * 1000000 * baseMonthlyRate) / 12;
 
     // Calculate discounted monthly cost
     const discountedMonthlyAmount =
-      monthlyCommitmentCredits * applicableTier.pricePerCredit;
+      (commitmentTier * 1000000 * applicableTier.pricePerCredit) / 12;
 
     // Calculate monthly and annual savings
     const monthlySavings = standardMonthlyAmount - discountedMonthlyAmount;
     let annualSavings = monthlySavings * 12;
 
-    // Override for 10% tier to match exactly $40,800 (10% of annual spend of $408,000)
-    if (applicableTier.discount === 0.1) {
-      annualSavings = 40800; // 10% of $408,000 annual spend
-    }
-
     // Calculate annual costs
-    const standardAnnualAmount = standardMonthlyAmount * 12;
-    const discountedAnnualAmount = discountedMonthlyAmount * 12;
+    const standardAnnualAmount = commitmentTier * 1000000 * baseMonthlyRate;
+    const discountedAnnualAmount =
+      commitmentTier * 1000000 * applicableTier.pricePerCredit;
 
     // Calculate the equivalent months of free service
     const freeMonthsEquivalent = annualSavings / currentMonthlySpend;
@@ -337,13 +335,13 @@ const AnnualPlanBenefits = ({
                   </div>
                   <div className="text-2xl font-bold">
                     $
-                    {calculations.standardMonthlyAmount.toLocaleString(
+                    {((commitmentTier * 1000000 * 0.008) / 12).toLocaleString(
                       undefined,
                       { maximumFractionDigits: 0 },
                     )}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    $0.008 per credit
+                    {commitmentTier}M credits × $0.008 ÷ 12
                   </div>
                 </div>
 
@@ -353,14 +351,16 @@ const AnnualPlanBenefits = ({
                   </div>
                   <div className="text-2xl font-bold text-primary">
                     $
-                    {calculations.discountedMonthlyAmount.toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 0 },
-                    )}
+                    {(
+                      (commitmentTier *
+                        1000000 *
+                        calculations.applicableTier.pricePerCredit) /
+                      12
+                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    ${calculations.applicableTier.pricePerCredit.toFixed(4)} per
-                    credit
+                    {commitmentTier}M credits × $
+                    {calculations.applicableTier.pricePerCredit.toFixed(4)} ÷ 12
                   </div>
                 </div>
 
@@ -370,16 +370,17 @@ const AnnualPlanBenefits = ({
                   </div>
                   <div className="text-2xl font-bold text-primary">
                     $
-                    {calculations.discountedAnnualAmount.toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 0 },
-                    )}
+                    {(
+                      commitmentTier *
+                      1000000 *
+                      calculations.applicableTier.pricePerCredit
+                    ).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </div>
                   <div className="flex flex-col gap-1 text-xs text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <span className="line-through">
                         $
-                        {calculations.standardAnnualAmount.toLocaleString(
+                        {(commitmentTier * 1000000 * 0.008).toLocaleString(
                           undefined,
                           { maximumFractionDigits: 0 },
                         )}{" "}
@@ -403,7 +404,12 @@ const AnnualPlanBenefits = ({
                   </div>
                   <div className="text-2xl font-bold text-green-600">
                     $
-                    {calculations.annualSavings.toLocaleString(undefined, {
+                    {(
+                      commitmentTier * 1000000 * 0.008 -
+                      commitmentTier *
+                        1000000 *
+                        calculations.applicableTier.pricePerCredit
+                    ).toLocaleString(undefined, {
                       maximumFractionDigits: 0,
                     })}
                   </div>
@@ -717,7 +723,7 @@ const AnnualPlanBenefits = ({
           </CardContent>
           <CardFooter>
             <Button className="w-full" size="lg">
-              Lock In Your {commitmentTier}M Credit Annual Plan{" "}
+              View {commitmentTier}M Credit Annual Plan Details{" "}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardFooter>

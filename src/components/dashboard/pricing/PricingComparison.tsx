@@ -305,7 +305,7 @@ const PricingComparison = ({
                 {tier.annualPrice ? (
                   <>
                     <Lock className="h-4 w-4 mr-2" />
-                    Lock In This Rate
+                    View Plan Details
                   </>
                 ) : (
                   "Continue With Pay-As-You-Go"

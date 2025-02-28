@@ -320,6 +320,14 @@ const UsageAnalysis = ({
     return value;
   };
 
+  // Format large numbers with abbreviations
+  const formatLargeNumber = (value: number) => {
+    if (!value) return "0";
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
+    return value.toLocaleString();
+  };
+
   // Available months for filtering
   const months = [
     { id: "all", name: "All Months" },
@@ -426,11 +434,13 @@ const UsageAnalysis = ({
                     ? consumptionData.data
                         .find((item) => item.month === "Total")
                         ?.totalCost.toLocaleString(undefined, {
-                          maximumFractionDigits: 2,
+                          maximumFractionDigits: 0,
                         })
-                    : consumptionData.data
-                        .find((item) => item.month === "Total")
-                        ?.sumOfCredits.toLocaleString()}
+                    : formatLargeNumber(
+                        consumptionData.data.find(
+                          (item) => item.month === "Total",
+                        )?.sumOfCredits,
+                      )}
                   {displayMode === "credits" ? " credits" : ""}
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -464,16 +474,14 @@ const UsageAnalysis = ({
                         )?.totalCost /
                         (consumptionData.data.length - 1)
                       ).toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
+                        maximumFractionDigits: 0,
                       })
-                    : (
+                    : formatLargeNumber(
                         consumptionData.data.find(
                           (item) => item.month === "Total",
                         )?.sumOfCredits /
-                        (consumptionData.data.length - 1)
-                      ).toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}
+                          (consumptionData.data.length - 1),
+                      )}
                   {displayMode === "credits" ? " credits" : ""}
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -817,7 +825,7 @@ const UsageAnalysis = ({
                     usage.
                   </p>
                   <Button className="mt-4 bg-amber-600 hover:bg-amber-700 text-white">
-                    View Annual Plan Options
+                    View Usage Optimization Tips
                     <ArrowUpRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
