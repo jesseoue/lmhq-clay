@@ -32,17 +32,27 @@ interface AnnualPlanBenefitsProps {
 
 const AnnualPlanBenefits = ({
   clientName = "Clay.com",
-  currentMonthlySpend = 34000,
+  currentMonthlySpend = 34778.85,
   currentCreditRate = 0.008,
   projectedAnnualCredits = 50000000,
 }: AnnualPlanBenefitsProps) => {
   // State for commitment tier (in millions of credits)
   const [commitmentTier, setCommitmentTier] = useState(40);
 
-  // Current usage data
-  const currentAnnualCredits = 4347250; // February 2025 usage
-  const currentMonthlyCredits = 4347250; // February 2025 monthly usage
-  const currentAnnualSpend = 417336; // $417,336 annual cost
+  // Current usage data from February 2025
+  const currentMonthlyCredits = 4347355.65; // February 2025 monthly usage (4.35M credits)
+  const currentAnnualSpend = currentMonthlySpend * 12; // Annual cost based on current monthly spend
+
+  // February 2025 service breakdown
+  const serviceBreakdown = {
+    emailFinder: 22497.9,
+    emailValidation: 92.99,
+    mobileFinder: 4059.48,
+    companySearch: 878.49,
+    linkedinFinder: 314.72,
+    competitorsSearch: 88.08,
+    personalEmailFinder: 0.35,
+  };
 
   // Discount tiers (in millions of credits)
   const discountTiers = [
@@ -260,7 +270,10 @@ const AnnualPlanBenefits = ({
                   <span>90M</span>
                 </div>
                 <div className="flex items-center justify-center text-xs text-primary font-medium mt-2">
-                  <span>Current usage: 4.35M credits/month (~52.2M/year)</span>
+                  <span>
+                    Current usage: 4.35M credits/month (~52.2M/year) at
+                    $34,779/month
+                  </span>
                 </div>
               </div>
 
