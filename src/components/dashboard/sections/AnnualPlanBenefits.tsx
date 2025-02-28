@@ -618,8 +618,7 @@ const AnnualPlanBenefits = ({
                   ${calculations.formattedDiscountedMonthlyAmount}
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  Effective monthly cost vs. current $
-                  {formatCurrency(currentMonthlySpend, 0)}/month
+                  Effective monthly cost
                   <div className="mt-1 text-green-600 font-medium">
                     Save $
                     {formatCurrency(
