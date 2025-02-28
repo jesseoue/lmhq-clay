@@ -480,11 +480,9 @@ const AnnualPlanBenefits = ({
                     >
                       <div className="text-xs">{tier.threshold}M</div>
                       <div className="font-bold">{tier.discount * 100}%</div>
-                      {index >= 0 && (
-                        <div className="text-xs mt-1 bg-amber-200 text-amber-800 px-1 rounded-sm font-medium">
-                          Price Protection
-                        </div>
-                      )}
+                      <div className="text-xs mt-1 bg-amber-200 text-amber-800 px-1 rounded-sm font-medium">
+                        Price Protection
+                      </div>
                     </button>
                   ))}
                 </div>
